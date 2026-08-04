@@ -1,12 +1,3 @@
-// api/analyze.js
-// Serverless function (Vercel). La chiave GEMINI_API_KEY resta SOLO qui,
-// mai esposta al browser. Il frontend chiama questo endpoint, non Google direttamente.
-
-// --- Rate limit "best effort" in memoria ---
-// ATTENZIONE: su Vercel ogni funzione serverless può girare su istanze diverse,
-// quindi questo contatore NON è perfettamente affidabile (si azzera se cambia istanza).
-// Per un limite serio e persistente serve un DB esterno gratuito tipo Upstash Redis
-// (vedi note in fondo al file). Per iniziare, questo basta a scoraggiare l'abuso banale.
 const hits = new Map(); // ip -> { count, day }
 
 function getToday() {
@@ -30,7 +21,7 @@ function checkRateLimit(ip) {
 }
 
 const PROMPT = `Guarda questa immagine di un frigorifero, una dispensa o del cibo in casa.
-Elenca tutti gli alimenti e ingredienti che riesci a identificare chiaramente (massimo 12).
+Elenca tutti gli alimenti e ingredienti che riesci a identificare chiaramente (massimo 50 anche se di solito ce ne sono meno).
 Poi, usando SOLO quegli ingredienti (puoi dare per scontato che sale, pepe, olio d'oliva e acqua siano sempre disponibili), proponi fino a 3 ricette realizzabili, dalla più semplice alla più elaborata.
 Per ogni ricetta indica: titolo, tempo di preparazione stimato, difficoltà (Facile/Media/Difficile), gli ingredienti visti che usa, eventuali ingredienti mancanti da comprare, e massimo 4 passaggi brevi (una frase corta ciascuno).
 Rispondi ESCLUSIVAMENTE con un oggetto JSON valido, nessun testo prima o dopo, nessun blocco markdown, con esattamente questa struttura:
