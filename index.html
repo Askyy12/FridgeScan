@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scanner da Cucina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1F2A1E;
+    --bg-2: #16201A;
+    --paper: #F3EEE1;
+    --paper-2: #E8DEC7;
+    --ink: #211F1A;
+    --mustard: #E3A537;
+    --rust: #C1592F;
+    --cream: #F3EEE1;
+    --cream-dim: rgba(243,238,225,0.68);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: radial-gradient(ellipse at top, var(--bg) 0%, var(--bg-2) 70%);
+    color: var(--cream);
+    font-family: var(--font-body);
+    min-height:100vh;
+    padding: 48px 20px 80px;
+  }
+
+  .container{ max-width: 880px; margin: 0 auto; }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mustard);
+    text-align:center;
+    margin-bottom: 14px;
+  }
+
+  h1{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    text-align:center;
+    line-height: 1.05;
+    margin: 0 0 14px;
+  }
+
+  .subtitle{
+    text-align:center;
+    max-width: 46ch;
+    margin: 0 auto;
+    color: var(--cream-dim);
+    font-size: 15px;
+    line-height:1.5;
+  }
+
+  /* --- Photo module --- */
+  .photo-card{
+    background: var(--paper);
+    padding: 14px 14px 44px;
+    max-width: 340px;
+    margin: 44px auto 0;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    transform: rotate(-2deg);
+    position: relative;
+  }
+
+  .photo-frame{
+    aspect-ratio: 4/3;
+    background:
+      repeating-linear-gradient(45deg, #DED6C0, #DED6C0 10px, #E7E0CC 10px, #E7E0CC 20px);
+    border: 1px dashed rgba(33,31,26,0.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    overflow:hidden;
+    position:relative;
+  }
+  .photo-frame:focus-visible{ outline: 3px solid var(--rust); outline-offset: 3px; }
+
+  .photo-frame img{
+    width:100%; height:100%; object-fit:cover; display:none;
+  }
+
+  .upload-hint{
+    text-align:center;
+    color: rgba(33,31,26,0.55);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 0 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .upload-hint svg{ width:28px; height:28px; opacity:0.6; }
+
+  .photo-caption{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align:center;
+    margin-top: 10px;
+    color: var(--ink);
+    opacity:0.6;
+  }
+
+  .actions{
+    display:flex;
+    justify-content:center;
+    gap: 14px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  .btn{
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 13px;
+    border: none;
+    padding: 14px 26px;
+    cursor:pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+
+  .btn-analyze{
+    background: var(--mustard);
+    color: var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .btn-analyze:hover:not(:disabled){ transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--ink); }
+  .btn-analyze:active:not(:disabled){ transform: translate(0,0); box-shadow: 1px 1px 0 var(--ink); }
+  .btn-analyze:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn-analyze:focus-visible{ outline: 3px solid var(--cream); outline-offset: 2px; }
+
+  .btn-reset{
+    background: transparent;
+    color: var(--cream-dim);
+    border: 1px solid rgba(243,238,225,0.3);
+  }
+  .btn-reset:hover{ color: var(--cream); border-color: var(--cream); }
+  .btn-reset:focus-visible{ outline: 2px solid var(--mustard); outline-offset:2px; }
+
+  .status{
+    font-family: var(--font-mono);
+    color: var(--mustard);
+    text-align:center;
+    margin-top: 20px;
+    min-height: 18px;
+    font-size: 13px;
+  }
+
+  /* --- Results --- */
+  #results{ display:none; margin-top: 44px; }
+
+  .section-label{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--mustard);
+    text-align:center;
+    margin-bottom: 16px;
+  }
+
+  .ingredients-wrap{
+    text-align:center;
+    margin-bottom: 40px;
+  }
+
+  .tag{
+    display:inline-block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    background: var(--paper-2);
+    color: var(--ink);
+    padding: 7px 14px;
+    margin: 5px;
+    box-shadow: 1px 3px 6px rgba(0,0,0,0.3);
+  }
+
+  .recipes-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 34px 22px;
+  }
+
+  .recipe-card{
+    background: var(--paper);
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 27px, rgba(33,31,26,0.09) 28px);
+    padding: 26px 20px 20px;
+    color: var(--ink);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.35);
+    position: relative;
+    cursor: pointer;
+  }
+  .recipe-card:nth-child(odd){ transform: rotate(-1.2deg); }
+  .recipe-card:nth-child(even){ transform: rotate(1deg); }
+  .recipe-card:focus-visible{ outline: 3px solid var(--rust); outline-offset: 3px; }
+
+  .pin{
+    width: 14px; height:14px; border-radius:50%;
+    background: var(--rust);
+    position:absolute; top:-7px; left: 24px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+  }
+
+  .recipe-card h3{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    margin: 4px 0 6px;
+    line-height:1.2;
+  }
+
+  .recipe-meta{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.65;
+    margin-bottom: 12px;
+  }
+
+  .recipe-card p{ font-size: 13px; line-height:1.5; margin: 6px 0; }
+  .recipe-card strong{ font-weight: 700; }
+
+  .ing-missing{ color: var(--rust); }
+
+  .steps{ display:none; margin-top: 12px; padding-left: 18px; }
+  .steps li{ font-size: 13px; line-height:1.5; margin-bottom: 6px; }
+  .recipe-card.open .steps{ display:block; }
+
+  .expand-hint{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.5;
+    margin-top: 10px;
+  }
+  .recipe-card.open .expand-hint{ display:none; }
+
+  .error-card{
+    background: rgba(193,89,47,0.16);
+    border: 1px solid var(--rust);
+    color: var(--cream);
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 480px;
+    margin: 0 auto;
+    text-align:center;
+  }
+
+  .footnote{
+    text-align:center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(243,238,225,0.4);
+    margin-top: 60px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="eyebrow">Scanner da cucina</div>
+  <h1>Cosa c'è nel frigo?</h1>
+  <p class="subtitle">Scatta una foto al frigo o alla dispensa. L'IA riconosce gli ingredienti e ti propone cosa cucinare stasera.</p>
+
+  <div class="photo-card">
+    <div class="photo-frame" id="photoFrame" tabindex="0" role="button" aria-label="Carica una foto del frigo o della dispensa">
+      <img id="previewImg" alt="Anteprima foto frigo">
+      <div class="upload-hint" id="uploadHint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <span>Tocca per scattare<br>o caricare una foto</span>
+      </div>
+    </div>
+    <div class="photo-caption" id="photoCaption">in attesa di una foto</div>
+  </div>
+
+  <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none">
+
+  <div class="actions">
+    <button class="btn btn-analyze" id="analyzeBtn" disabled>Analizza il frigo</button>
+    <button class="btn btn-reset" id="resetBtn">Nuova foto</button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div id="results">
+    <div class="section-label" id="ingredientsLabel">Ho trovato</div>
+    <div class="ingredients-wrap" id="ingredients"></div>
+
+    <div class="section-label" id="recipesLabel">Puoi cucinare</div>
+    <div class="recipes-grid" id="recipes"></div>
+  </div>
+
+  <div class="footnote">Prototipo — il riconoscimento usa un modello di visione IA, nessun database di prodotti dietro.</div>
+</div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const photoFrame = document.getElementById('photoFrame');
+  const previewImg = document.getElementById('previewImg');
+  const uploadHint = document.getElementById('uploadHint');
+  const photoCaption = document.getElementById('photoCaption');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const statusEl = document.getElementById('status');
+  const resultsEl = document.getElementById('results');
+  const ingredientsEl = document.getElementById('ingredients');
+  const recipesEl = document.getElementById('recipes');
+  const ingredientsLabel = document.getElementById('ingredientsLabel');
+  const recipesLabel = document.getElementById('recipesLabel');
+
+  let currentImage = null; // { mediaType, base64 }
+
+  photoFrame.addEventListener('click', () => fileInput.click());
+  photoFrame.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fileInput.click(); }
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const match = dataUrl.match(/^data:(image\/[a-zA-Z]+);base64,(.*)$/);
+      if(!match) return;
+      currentImage = { mediaType: match[1], base64: match[2] };
+      previewImg.src = dataUrl;
+      previewImg.style.display = 'block';
+      uploadHint.style.display = 'none';
+      photoCaption.textContent = file.name.length > 28 ? file.name.slice(0,25) + '...' : file.name;
+      analyzeBtn.disabled = false;
+      resultsEl.style.display = 'none';
+      statusEl.textContent = '';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    currentImage = null;
+    previewImg.src = '';
+    previewImg.style.display = 'none';
+    uploadHint.style.display = 'flex';
+    photoCaption.textContent = 'in attesa di una foto';
+    analyzeBtn.disabled = true;
+    resultsEl.style.display = 'none';
+    statusEl.textContent = '';
+    fileInput.value = '';
+  });
+
+  const loadingPhrases = [
+    'Sto guardando nel frigo...',
+    'Conto le uova...',
+    'Controllo dietro allo yogurt...',
+    'Sfoglio il ricettario...',
+    'Quasi pronto...'
+  ];
+
+  analyzeBtn.addEventListener('click', analyze);
+
+  async function analyze(){
+    if(!currentImage) return;
+    analyzeBtn.disabled = true;
+    resultsEl.style.display = 'none';
+
+    let phraseIndex = 0;
+    statusEl.textContent = loadingPhrases[0];
+    const phraseTimer = setInterval(() => {
+      phraseIndex = (phraseIndex + 1) % loadingPhrases.length;
+      statusEl.textContent = loadingPhrases[phraseIndex];
+    }, 1600);
+
+    try{
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mediaType: currentImage.mediaType,
+          base64: currentImage.base64
+        })
+      });
+
+      const parsed = await response.json();
+
+      clearInterval(phraseTimer);
+
+      if(!response.ok || parsed.error){
+        showError(parsed.error || 'Qualcosa è andato storto. Riprova tra poco.');
+      } else {
+        showResults(parsed);
+      }
+    } catch(err){
+      clearInterval(phraseTimer);
+      console.error('Errore analisi:', err);
+      showError('Non sono riuscito ad analizzare la foto. Controlla la connessione e riprova.');
+    } finally {
+      analyzeBtn.disabled = false;
+      statusEl.textContent = '';
+    }
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  function showError(msg){
+    resultsEl.style.display = 'block';
+    ingredientsLabel.style.display = 'none';
+    recipesLabel.style.display = 'none';
+    ingredientsEl.innerHTML = '';
+    recipesEl.innerHTML = `<div class="error-card">${escapeHtml(msg)}</div>`;
+  }
+
+  function showResults(data){
+    resultsEl.style.display = 'block';
+    ingredientsLabel.style.display = 'block';
+    recipesLabel.style.display = 'block';
+
+    ingredientsEl.innerHTML = (data.ingredients || []).map((ing, i) => {
+      const rot = (i % 2 === 0 ? -1 : 1) * (2 + (i % 3));
+      return `<span class="tag" style="transform: rotate(${rot}deg)">${escapeHtml(ing)}</span>`;
+    }).join('');
+
+    recipesEl.innerHTML = (data.recipes || []).map((r) => {
+      const missing = (r.missingIngredients && r.missingIngredients.length)
+        ? `<p class="ing-missing"><strong>Da comprare:</strong> ${r.missingIngredients.map(escapeHtml).join(', ')}</p>`
+        : '';
+      const steps = (r.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      return `
+        <div class="recipe-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="pin"></div>
+          <h3>${escapeHtml(r.title)}</h3>
+          <div class="recipe-meta">${escapeHtml(r.time || '')} · ${escapeHtml(r.difficulty || '')}</div>
+          <p><strong>Usa:</strong> ${(r.usedIngredients || []).map(escapeHtml).join(', ')}</p>
+          ${missing}
+          <ol class="steps">${steps}</ol>
+          <div class="expand-hint">Tocca per il procedimento</div>
+        </div>
+      `;
+    }).join('');
+
+    document.querySelectorAll('.recipe-card').forEach(card => {
+      const toggle = () => {
+        const isOpen = card.classList.toggle('open');
+        card.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      };
+      card.addEventListener('click', toggle);
+      card.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+      });
+    });
+  }
+</script>
+</body>
+</html>
