@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registrati — Scanner da Cucina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1F2A1E;
+    --bg-2: #16201A;
+    --paper: #F3EEE1;
+    --paper-2: #E8DEC7;
+    --ink: #211F1A;
+    --mustard: #E3A537;
+    --rust: #C1592F;
+    --cream: #F3EEE1;
+    --cream-dim: rgba(243,238,225,0.68);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: radial-gradient(ellipse at top, var(--bg) 0%, var(--bg-2) 70%);
+    color: var(--cream);
+    font-family: var(--font-body);
+    min-height:100vh;
+    padding: 48px 20px 80px;
+  }
+
+  .container{ max-width: 420px; margin: 0 auto; }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mustard);
+    text-align:center;
+    margin-bottom: 14px;
+  }
+
+  h1{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    text-align:center;
+    line-height: 1.05;
+    margin: 0 0 14px;
+  }
+
+  .subtitle{
+    text-align:center;
+    max-width: 40ch;
+    margin: 0 auto;
+    color: var(--cream-dim);
+    font-size: 14px;
+    line-height:1.5;
+  }
+
+  .auth-card{
+    background: var(--paper);
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 27px, rgba(33,31,26,0.08) 28px);
+    padding: 34px 28px 28px;
+    margin: 40px auto 0;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    transform: rotate(1deg);
+    position: relative;
+    color: var(--ink);
+  }
+
+  .pin{
+    width: 14px; height:14px; border-radius:50%;
+    background: var(--rust);
+    position:absolute; top:-7px; left: 28px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+  }
+
+  .field{ margin-bottom: 20px; }
+
+  .field label{
+    display:block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+
+  .field input{
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 15px;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid rgba(33,31,26,0.35);
+    padding: 8px 2px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s ease;
+  }
+  .field input:focus{ border-color: var(--rust); }
+  .field input::placeholder{ color: rgba(33,31,26,0.35); }
+
+  .hint{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(33,31,26,0.45);
+    margin-top: 6px;
+  }
+
+  .btn{
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 13px;
+    border: none;
+    padding: 14px 26px;
+    cursor:pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+    width: 100%;
+  }
+
+  .btn-analyze{
+    background: var(--mustard);
+    color: var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    margin-top: 4px;
+  }
+  .btn-analyze:hover:not(:disabled){ transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--ink); }
+  .btn-analyze:active:not(:disabled){ transform: translate(0,0); box-shadow: 1px 1px 0 var(--ink); }
+  .btn-analyze:disabled{ opacity:0.55; cursor:not-allowed; }
+  .btn-analyze:focus-visible{ outline: 3px solid var(--rust); outline-offset: 2px; }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    margin: 22px 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(33,31,26,0.45);
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background: rgba(33,31,26,0.2);
+  }
+
+  .btn-google{
+    background: var(--paper-2);
+    color: var(--ink);
+    border: 1px solid rgba(33,31,26,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+  }
+  .btn-google:hover:not(:disabled){ background: #DED2AF; }
+  .btn-google:disabled{ opacity:0.55; cursor:not-allowed; }
+  .btn-google svg{ width:16px; height:16px; }
+
+  .status{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align:center;
+    margin-top: 18px;
+    min-height: 16px;
+    line-height:1.5;
+  }
+  .status.error{ color: var(--rust); }
+  .status.ok{ color: #3E6B4F; }
+  .status.pending{ color: var(--cream-dim); }
+
+  .switch{
+    text-align:center;
+    margin-top: 26px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--cream-dim);
+  }
+  .switch a{ color: var(--mustard); text-decoration: underline; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="eyebrow">Scanner da cucina</div>
+  <h1>Crea un account</h1>
+  <p class="subtitle">Registrati per salvare le tue scansioni e ritrovare le ricette in un secondo momento.</p>
+
+  <form class="auth-card" id="signupForm" novalidate>
+    <div class="pin"></div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="tu@esempio.it" autocomplete="email" required>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="new-password" required minlength="6">
+      <div class="hint">Almeno 6 caratteri.</div>
+    </div>
+
+    <div class="field">
+      <label for="passwordConfirm">Conferma password</label>
+      <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="••••••••" autocomplete="new-password" required minlength="6">
+    </div>
+
+    <button type="submit" class="btn btn-analyze" id="signupBtn">Registrati</button>
+
+    <div class="divider">oppure</div>
+
+    <button type="button" class="btn btn-google" id="googleBtn">
+      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.7 5.5 29.6 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5 44.5 35.3 44.5 24c0-1.2-.1-2.4-.3-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.7 5.5 29.6 3.5 24 3.5 15.9 3.5 8.9 8.1 6.3 14.7z"/><path fill="#4CAF50" d="M24 44.5c5.5 0 10.5-1.9 14.4-5.1l-6.6-5.6c-2.1 1.5-4.8 2.4-7.8 2.4-5.3 0-9.7-3.3-11.3-8l-6.6 5.1C8.9 40.9 15.9 44.5 24 44.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.1-4.2 5.5l6.6 5.6C41.8 35.9 44.5 30.4 44.5 24c0-1.2-.1-2.4-.3-3.5z"/></svg>
+      Continua con Google
+    </button>
+
+    <div class="status" id="status"></div>
+  </form>
+
+  <div class="switch">Hai già un account? <a href="login.html">Accedi</a></div>
+</div>
+
+<!-- Firebase (compat SDK) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script>
+  // TODO: incolla qui la tua configurazione Firebase (Console Firebase → Impostazioni progetto → Le tue app)
+  // Deve essere IDENTICA a quella usata in login.html
+  const firebaseConfig = {
+    apiKey: "AIzaSyApm81jhRdTkn-II4vaI5IytejQ76HnuCU",
+    authDomain: "fridgescan-7c427.firebaseapp.com",
+    projectId: "fridgescan-7c427",
+    storageBucket: "fridgescan-7c427.firebasestorage.app",
+    messagingSenderId: "659399148712",
+    appId: "1:659399148712:web:3c3baaf9dda1fa3d5aee9d"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      window.location.href = 'index.html';
+    }
+  });
+
+  const form = document.getElementById('signupForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const passwordConfirmInput = document.getElementById('passwordConfirm');
+  const signupBtn = document.getElementById('signupBtn');
+  const googleBtn = document.getElementById('googleBtn');
+  const statusEl = document.getElementById('status');
+
+  function setStatus(msg, kind){
+    statusEl.textContent = msg;
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  }
+
+  function setBusy(busy){
+    signupBtn.disabled = busy;
+    googleBtn.disabled = busy;
+  }
+
+  function friendlyError(err){
+    const map = {
+      'auth/invalid-email': 'Email non valida.',
+      'auth/email-already-in-use': 'Esiste già un account con questa email. Prova ad accedere.',
+      'auth/weak-password': 'La password deve avere almeno 6 caratteri.',
+      'auth/too-many-requests': 'Troppi tentativi. Riprova tra qualche minuto.',
+      'auth/popup-closed-by-user': 'Registrazione con Google annullata.',
+      'auth/network-request-failed': 'Problema di connessione. Riprova.'
+    };
+    return map[err.code] || 'Qualcosa è andato storto. Riprova.';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const passwordConfirm = passwordConfirmInput.value;
+
+    if(!email || !password || !passwordConfirm){
+      setStatus('Compila tutti i campi.', 'error');
+      return;
+    }
+    if(password.length < 6){
+      setStatus('La password deve avere almeno 6 caratteri.', 'error');
+      return;
+    }
+    if(password !== passwordConfirm){
+      setStatus('Le due password non coincidono.', 'error');
+      return;
+    }
+
+    setBusy(true);
+    setStatus('Creazione account in corso...', 'pending');
+
+    try{
+      await auth.createUserWithEmailAndPassword(email, password);
+      setStatus('Account creato, ti sto reindirizzando...', 'ok');
+    } catch(err){
+      console.error('Errore registrazione:', err);
+      setStatus(friendlyError(err), 'error');
+      setBusy(false);
+    }
+  });
+
+  googleBtn.addEventListener('click', async () => {
+    setBusy(true);
+    setStatus('Apro la finestra di Google...', 'pending');
+    try{
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
+      setStatus('Account creato, ti sto reindirizzando...', 'ok');
+    } catch(err){
+      console.error('Errore registrazione Google:', err);
+      setStatus(friendlyError(err), 'error');
+      setBusy(false);
+    }
+  });
+</script>
+</body>
+</html>
